@@ -1,21 +1,21 @@
-# Use an official Python runtime as a parent image
-FROM python:3.11
+# Use the Red Hat Universal Base Image 8 with Python 3.12
+FROM registry.access.redhat.com/ubi8/python-312
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Switch to the root user to install packages
+USER root
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    jq \
-    && rm -rf /var/lib/apt/lists/*
+# Install system packages
+RUN yum -y update && \
+    yum -y install \
+    vim \
+    openldap-clients && \
+    yum clean all
 
-# Install Python dependencies
-RUN pip install --no-cache-dir pyyaml yq requests psycopg2-binary
-RUN apt-get update && apt-get install -y ldap-utils vim 
+# Install Python packages
+RUN pip install --no-cache-dir \
+    pyyaml \
+    yq \
+    requests
 
-
-# Copy the current directory contents into the container at /usr/src/app
-COPY . .
-
-# Command to keep the container running
-CMD ["tail", "-f", "/dev/null"]
+# Set the default command to start the container
+CMD ["/bin/bash"]
