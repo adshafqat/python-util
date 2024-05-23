@@ -1,21 +1,14 @@
-# Use the Red Hat Universal Base Image 8 with Python 3.12
-FROM registry.access.redhat.com/ubi8/python-312
+# Use Red Hat Universal Base Image as the base image
+FROM registry.access.redhat.com/ubi8/ubi
 
-# Switch to the root user to install packages
-USER root
-
-# Install system packages
-RUN yum -y update && \
-    yum -y install \
-    vim \
-    openldap-clients && \
+# Install necessary system packages
+RUN yum update -y && \
+    yum install -y python3 python3-pip openldap-clients vim bash && \
     yum clean all
 
 # Install Python packages
-RUN pip install --no-cache-dir \
-    pyyaml \
-    yq \
-    requests
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install pyyaml yq requests
 
-# Set the default command to start the container
-CMD ["/bin/bash"]
+# Set default command to bash
+CMD ["bash"]
